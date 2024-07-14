@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  dhcp-vlan10:
+    build: ./dhcp
+    container_name: lg-vlan10
+    image: vlan10
+    volumes:
+      - ./dhcp/configs/dhcpd-vlan10.conf:/etc/dhcp/dhcpd.conf
+    networks:
+      vlan10:
+        ipv4_address: 192.168.10.2
+
+  dhcp-vlan20:
+    build: ./dhcp
+    container_name: lg-vlan20
+    image: vlan20
+    volumes:
+      - ./dhcp/configs/dhcpd-vlan20.conf:/etc/dhcp/dhcpd.conf
+    networks:
+      vlan20:
+        ipv4_address: 192.168.20.2
+
+networks:
+  vlan10:
+    driver: macvlan
+    driver_opts:
+      parent: enp2s0f0.10
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.1
+  vlan20:
+    driver: macvlan
+    driver_opts:
+      parent: enp2s0f0.20
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
+          gateway: 192.168.20.1

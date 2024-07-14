@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  dhcp-vlan10:
+    build:
+      context: ./dhcp
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/dhcpd-vlan10.conf:/etc/dhcp/custom/dhcpd.conf
+    networks:
+      vlan10:
+        ipv4_address: 192.168.10.2
+    restart: unless-stopped
+
+  dhcp-vlan20:
+    build:
+      context: ./dhcp
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/dhcpd-vlan20.conf:/etc/dhcp/custom/dhcpd.conf
+    networks:
+      vlan20:
+        ipv4_address: 192.168.20.2
+    restart: unless-stopped
+
+  dhcp-vlan30:
+    build:
+      context: ./dhcp
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/dhcpd-vlan30.conf:/etc/dhcp/custom/dhcpd.conf
+    networks:
+      vlan30:
+        ipv4_address: 192.168.30.2
+    restart: unless-stopped
+
+  dns-server:
+    build:
+      context: ./bind9
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind9/named.conf:/etc/bind/named.conf
+      - ./bind9/db.example.com:/etc/bind/db.example.com
+    networks:
+      vlan10:
+        ipv4_address: 192.168.10.3
+      vlan20:
+        ipv4_address: 192.168.20.3
+      vlan30:
+        ipv4_address: 192.168.30.3
+    restart: unless-stopped
+
+networks:
+  vlan10:
+    driver: macvlan
+    driver_opts:
+      parent: eth0.10
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.1
+
+  vlan20:
+    driver: macvlan
+    driver_opts:
+      parent: eth0.20
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
+          gateway: 192.168.20.1
+
+  vlan30:
+    driver: macvlan
+    driver_opts:
+      parent: eth0.30
+    ipam:
+      config:
+        - subnet: 192.168.30.0/24
+          gateway: 192.168.30.1
