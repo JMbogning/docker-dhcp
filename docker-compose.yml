@@ -6,6 +6,8 @@ services:
     image: vlan10
     volumes:
       - ./dhcp/configs/dhcpd-vlan10.conf:/etc/dhcp/dhcpd.conf
+    cap_add:
+      - NET_ADMIN
     networks:
       vlan10:
         ipv4_address: 192.168.10.2
@@ -16,6 +18,8 @@ services:
     image: vlan20
     volumes:
       - ./dhcp/configs/dhcpd-vlan20.conf:/etc/dhcp/dhcpd.conf
+    cap_add:
+      - NET_ADMIN
     networks:
       vlan20:
         ipv4_address: 192.168.20.2
